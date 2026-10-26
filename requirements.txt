@@ -24,6 +24,11 @@ docx2python>=3.0
 
 # --- ML ---
 sentence-transformers>=3.2
+# Enables the ONNX backend ml/encoder.py requests (backend="onnx"). Without this,
+# SentenceTransformer falls back to plain PyTorch silently -- it still works, just
+# dramatically slower (observed ~50x on this corpus, since each job description
+# encodes as several chunks and the speedup compounds per chunk).
+optimum[onnxruntime]
 lightgbm>=4.5
 scikit-learn>=1.5
 numpy>=1.26
