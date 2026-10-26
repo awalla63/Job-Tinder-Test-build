@@ -1,0 +1,34 @@
+# --- API ---
+fastapi>=0.115
+uvicorn[standard]>=0.32
+python-multipart>=0.0.12
+pydantic>=2.9
+pydantic-settings>=2.6
+pyjwt[crypto]>=2.9
+httpx>=0.27
+
+# --- Database ---
+psycopg[binary]>=3.2
+psycopg-pool>=3.2
+python-dotenv>=1.0
+
+# --- Resume parsing ---
+# pdfplumber (MIT) and pypdf (BSD). Deliberately NOT PyMuPDF/fitz, which is AGPL-3.0 --
+# its network-use clause is a real risk for a hosted web app.
+# docx2python rather than python-docx: python-docx's doc.paragraphs silently skips table
+# cells, headers/footers and text boxes, and resume templates routinely put the whole
+# skills sidebar in a text box.
+pdfplumber>=0.11
+pypdf>=5.1
+docx2python>=3.0
+
+# --- ML ---
+sentence-transformers>=3.2
+lightgbm>=4.5
+scikit-learn>=1.5
+numpy>=1.26
+pandas>=2.2
+
+# --- Dev ---
+pytest>=8.3
+pytest-asyncio>=0.24

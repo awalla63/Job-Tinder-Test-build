@@ -1,0 +1,37 @@
+# Data — never commit the corpora
+data/raw/
+*.csv
+*.csv.zip
+*.parquet
+
+# Model artifacts
+models/
+*.txt.model
+*.onnx
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Node
+node_modules/
+dist/
+.vite/
+
+# Env
+.env
+.env.local
+.env.*.local
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# TS build artifact
+*.tsbuildinfo
