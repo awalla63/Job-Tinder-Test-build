@@ -263,7 +263,7 @@ def list_matches(user: CurrentUser = Depends(get_current_user)) -> list[dict]:
     with get_connection() as conn, conn.cursor() as cur:
         cur.execute(
             """
-            select m.id, m.job_id, j.title, j.company_name, m.application_url,
+            select m.id, m.job_id, j.title as job_title, j.company_name, m.application_url,
                    j.source::text, m.created_at,
                    case when m.seeker_user_id = %(uid)s then e.company_name
                         else sp.display_name end as counterpart_name
