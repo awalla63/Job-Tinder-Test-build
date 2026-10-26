@@ -91,7 +91,7 @@ export function SwipeDeck<T>({
     } else if (info.offset.x < -SWIPE_THRESHOLD || info.velocity.x < -VELOCITY_THRESHOLD) {
       decide("pass");
     }
-    // Otherwise motion springs the card back to centre on its own.
+    // Otherwise dragSnapToOrigin on the card below springs it back to centre.
   };
 
   return (
@@ -125,8 +125,12 @@ export function SwipeDeck<T>({
             aria-label={describe(current)}
             onKeyDown={onKeyDown}
             drag="x"
-            dragConstraints={{ left: 0, right: 0 }}
-            dragElastic={0.6}
+            // Let the card move freely and animate back to x=0 on release.
+            // dragConstraints={{left:0,right:0}} was used here before: a zero-width
+            // box, which doesn't elastically resist dragging so much as prevent it --
+            // the element barely moves, so a real swipe-left never traveled far enough
+            // to register as a drag rather than a stray click, and "pass" looked stuck.
+            dragSnapToOrigin
             onDragEnd={onDragEnd}
             style={{ x, rotate }}
             initial={{ scale: 0.97, opacity: 0 }}
