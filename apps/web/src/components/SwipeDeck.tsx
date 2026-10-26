@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { motion, useMotionValue, useTransform, type PanInfo } from "motion/react";
+import { motion, useMotionValue, useTransform, animate } from "motion/react";
 
 const SWIPE_THRESHOLD = 120; // px of travel before a drag counts as a decision
 const VELOCITY_THRESHOLD = 500; // px/s, so a fast flick counts even if it is short
+const SNAP_BACK_SPRING = { type: "spring", stiffness: 300, damping: 30 } as const;
 
 export type Decision = "like" | "pass";
 
@@ -24,6 +25,14 @@ type Props<T> = {
  * aria-live region announces both the new card and the outcome of each decision. The
  * live region is rendered on first paint rather than injected on change -- screen
  * readers ignore regions that appear and populate in the same tick.
+ *
+ * Dragging is handled with raw pointer events rather than motion's `drag` prop. A
+ * dragConstraints={{left:0,right:0}} box here previously made the card barely move at
+ * all -- a real swipe-left never traveled far enough to register as a drag rather than
+ * a stray click -- and removing the constraint alone didn't fully resolve it either.
+ * Driving the motion value directly from pointerdown/pointermove/pointerup removes any
+ * dependence on the library's own drag-vs-click gesture heuristics: this component owns
+ * the entire interaction and its behaviour can be read straight off the code below.
  */
 export function SwipeDeck<T>({
   items,
@@ -36,6 +45,7 @@ export function SwipeDeck<T>({
   const [index, setIndex] = useState(0);
   const [announcement, setAnnouncement] = useState("");
   const cardRef = useRef<HTMLDivElement>(null);
+  const drag = useRef<{ pointerId: number; startX: number; startTime: number } | null>(null);
 
   const x = useMotionValue(0);
   const rotate = useTransform(x, [-300, 0, 300], [-14, 0, 14]);
@@ -55,7 +65,7 @@ export function SwipeDeck<T>({
         }`
       );
       onDecide(item, decision);
-      x.set(0);
+      x.jump(0);
       setIndex((i) => i + 1);
     },
     [items, index, onDecide, describe, remaining, x]
@@ -64,7 +74,7 @@ export function SwipeDeck<T>({
   // Reset when a fresh deck arrives.
   useEffect(() => {
     setIndex(0);
-    x.set(0);
+    x.jump(0);
   }, [items, x]);
 
   // Announce each new card, and move focus to it so keyboard users keep their place
@@ -85,13 +95,34 @@ export function SwipeDeck<T>({
     }
   };
 
-  const onDragEnd = (_: unknown, info: PanInfo) => {
-    if (info.offset.x > SWIPE_THRESHOLD || info.velocity.x > VELOCITY_THRESHOLD) {
+  const onPointerDown = (event: React.PointerEvent) => {
+    if (event.button !== 0 && event.pointerType === "mouse") return; // left click only
+    event.currentTarget.setPointerCapture(event.pointerId);
+    drag.current = { pointerId: event.pointerId, startX: event.clientX, startTime: performance.now() };
+  };
+
+  const onPointerMove = (event: React.PointerEvent) => {
+    if (!drag.current || drag.current.pointerId !== event.pointerId) return;
+    event.preventDefault();
+    x.jump(event.clientX - drag.current.startX);
+  };
+
+  const endDrag = (event: React.PointerEvent) => {
+    const started = drag.current;
+    if (!started || started.pointerId !== event.pointerId) return;
+    drag.current = null;
+
+    const offsetX = event.clientX - started.startX;
+    const elapsedMs = Math.max(1, performance.now() - started.startTime);
+    const velocityX = (offsetX / elapsedMs) * 1000; // px/s
+
+    if (offsetX > SWIPE_THRESHOLD || velocityX > VELOCITY_THRESHOLD) {
       decide("like");
-    } else if (info.offset.x < -SWIPE_THRESHOLD || info.velocity.x < -VELOCITY_THRESHOLD) {
+    } else if (offsetX < -SWIPE_THRESHOLD || velocityX < -VELOCITY_THRESHOLD) {
       decide("pass");
+    } else {
+      animate(x, 0, SNAP_BACK_SPRING);
     }
-    // Otherwise dragSnapToOrigin on the card below springs it back to centre.
   };
 
   return (
@@ -124,18 +155,16 @@ export function SwipeDeck<T>({
             tabIndex={0}
             aria-label={describe(current)}
             onKeyDown={onKeyDown}
-            drag="x"
-            // Let the card move freely and animate back to x=0 on release.
-            // dragConstraints={{left:0,right:0}} was used here before: a zero-width
-            // box, which doesn't elastically resist dragging so much as prevent it --
-            // the element barely moves, so a real swipe-left never traveled far enough
-            // to register as a drag rather than a stray click, and "pass" looked stuck.
-            dragSnapToOrigin
-            onDragEnd={onDragEnd}
-            style={{ x, rotate }}
+            onPointerDown={onPointerDown}
+            onPointerMove={onPointerMove}
+            onPointerUp={endDrag}
+            onPointerCancel={endDrag}
+            style={{ x, rotate, touchAction: "pan-y" }}
             initial={{ scale: 0.97, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="absolute inset-0 cursor-grab overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg outline-none focus-visible:ring-4 focus-visible:ring-indigo-300 active:cursor-grabbing motion-reduce:transition-none"
+            // select-none: dragging with the mouse starting over the card's own text
+            // (title, description) must move the card, not highlight the text under it.
+            className="absolute inset-0 cursor-grab select-none overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg outline-none focus-visible:ring-4 focus-visible:ring-indigo-300 active:cursor-grabbing motion-reduce:transition-none"
           >
             <motion.div
               style={{ opacity: likeOpacity }}
