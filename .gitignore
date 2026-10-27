@@ -4,8 +4,14 @@ data/raw/
 *.csv.zip
 *.parquet
 
-# Model artifacts
-models/
+# Model artifacts -- track the three files ml/train.py produces (small, ~3.5MB total,
+# and the deployed backend needs them: no training step runs at deploy time, it just
+# ships the already-trained, already-gated model from the repo) but ignore anything
+# else that lands here (e.g. ad-hoc checkpoints from experimentation).
+models/*
+!models/fit_model.txt
+!models/fit_artifacts.joblib
+!models/metrics.json
 *.txt.model
 *.onnx
 

@@ -1,3 +1,10 @@
+# CPU-only torch wheels. Without this, `pip install torch` on a Linux host (e.g. a
+# Render deploy) pulls the CUDA-enabled build by default -- several GB versus a few
+# hundred MB, and pointless here since inference runs through ONNX (see ml/encoder.py),
+# not torch's own CUDA path. Harmless locally on Windows, which already resolves to a
+# CPU wheel from plain PyPI.
+--extra-index-url https://download.pytorch.org/whl/cpu
+
 # --- API ---
 fastapi>=0.115
 uvicorn[standard]>=0.32

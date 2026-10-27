@@ -1,0 +1,4 @@
+# LightGBM's text model format and the joblib pickle should round-trip byte-for-byte
+# regardless of the checking-out platform's line-ending convention.
+models/fit_model.txt -text
+models/fit_artifacts.joblib -text

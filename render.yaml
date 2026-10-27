@@ -1,0 +1,48 @@
+# Render Blueprint for the API. Connect the repo at render.com/new and Render reads
+# this file automatically to provision the service, prompting only for the fields
+# marked `sync: false` below -- everything else is pre-wired.
+#
+# Why Render and not Vercel for this half of the app: the backend holds a loaded
+# sentence-transformer + ONNX runtime + LightGBM model and a live Postgres connection
+# pool for the life of the process. Vercel's serverless functions reload from scratch on
+# every cold invocation (reloading the model every time) and have package-size limits
+# well under what torch/onnxruntime/transformers need installed. This needs a normal
+# persistent process, which is what a Render web service is.
+services:
+  - type: web
+    name: job-tinder-api
+    runtime: python
+    # Pinned rather than left to Render's default: torch/onnxruntime/lightgbm wheel
+    # availability lags on brand-new Python releases, and the default could drift to
+    # one that doesn't have prebuilt wheels for these packages yet.
+    pythonVersion: "3.12"
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn services.api.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      # --- Secrets: fill these in on Render's dashboard during setup, not here ---
+      - key: DATABASE_URL
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_PROJECT_REF
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      # Optional -- only needed if you also run data/refresh_jobs.py from this service.
+      - key: USAJOBS_API_KEY
+        sync: false
+      - key: USAJOBS_USER_AGENT
+        sync: false
+
+      # --- Non-secret config: set here, no dashboard step needed ---
+      - key: EMBEDDING_MODEL
+        value: BAAI/bge-small-en-v1.5
+      - key: FIT_MODEL_PATH
+        value: models/fit_model.txt
+      - key: ANN_CANDIDATES
+        value: "200"
+      # Update this once the Vercel frontend URL is known -- it's a placeholder until
+      # then. Comma-separated if you ever need more than one allowed origin.
+      - key: CORS_ORIGINS
+        value: http://localhost:5173

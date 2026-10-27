@@ -1,0 +1,67 @@
+{
+  "trained_at": "2026-10-25T21:50:31",
+  "duration_seconds": 38.6,
+  "model": "lightgbm-multiclass",
+  "encoder": "SentenceTransformer",
+  "feature_set": "pairwise_plus",
+  "feature_names": [
+    "emb_cosine",
+    "tfidf_cosine",
+    "skill_overlap_count",
+    "skill_jaccard",
+    "skill_coverage",
+    "skill_idf_weighted",
+    "years_gap",
+    "seniority_gap",
+    "token_overlap_jaccard",
+    "job_required_years",
+    "job_seniority"
+  ],
+  "n_train": 6241,
+  "n_test": 1759,
+  "baseline_auc": 0.658,
+  "gate_passed": true,
+  "cold_jd": {
+    "split": "cold_jd",
+    "n": 1759,
+    "auc_good_vs_no": 0.6827,
+    "macro_f1": 0.4099,
+    "recall_per_class": {
+      "No Fit": 0.762,
+      "Potential Fit": 0.2027,
+      "Good Fit": 0.2795
+    },
+    "ndcg_seeker_at_10": 0.7279,
+    "ndcg_employer_at_10": 0.6546,
+    "n_seeker_groups": 130,
+    "n_employer_groups": 69
+  },
+  "cold_resume": {
+    "split": "cold_resume",
+    "n": 8000,
+    "auc_good_vs_no": 0.7561,
+    "macro_f1": 0.4795,
+    "recall_per_class": {
+      "No Fit": 0.7702,
+      "Potential Fit": 0.2575,
+      "Good Fit": 0.402
+    },
+    "ndcg_seeker_at_10": 0.7147,
+    "ndcg_employer_at_10": 0.6502,
+    "n_seeker_groups": 456,
+    "n_employer_groups": 325
+  },
+  "feature_importance": {
+    "emb_cosine": 9272.376458810642,
+    "job_required_years": 6280.104670956731,
+    "tfidf_cosine": 6069.322941109538,
+    "token_overlap_jaccard": 5582.425014141947,
+    "skill_idf_weighted": 4679.476238146424,
+    "skill_coverage": 4293.332082826644,
+    "job_seniority": 3676.3312396234833,
+    "skill_jaccard": 3430.5764711648226,
+    "seniority_gap": 3140.969387240708,
+    "years_gap": 2848.9016719013453,
+    "skill_overlap_count": 658.1245486102998
+  }
+}
