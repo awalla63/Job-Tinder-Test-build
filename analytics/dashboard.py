@@ -80,8 +80,60 @@ c2.metric("Demo resumes (train / test)", f"{int(res_row.train):,} / {int(res_row
 c3.metric("Jobs with a usable salary", f"{cov.salary_pct[0]:.1f}%")
 c4.metric("Remote-allowed jobs", f"{cov.remote_pct[0]:.1f}%")
 
-tab_plots, tab_audit, tab_dict, tab_split = st.tabs(
-    ["Plots", "Audit checks", "Data dictionary", "Reserved test split"])
+tab_about, tab_plots, tab_audit, tab_dict, tab_split = st.tabs(
+    ["Data sources & cleaning", "Plots", "Audit checks", "Data dictionary",
+     "Reserved test split"])
+
+with tab_about:
+    st.subheader("Original data sources")
+    st.markdown(
+        "| Dataset | Source | Raw rows | In Supabase |\n"
+        "| --- | --- | --- | --- |\n"
+        "| Job postings | [LinkedIn Job Postings, `postings.csv` (Kaggle, arshkon)]"
+        "(https://www.kaggle.com/datasets/arshkon/linkedin-job-postings?select=postings.csv) "
+        "| 123,849 | 44,138 in `public.jobs` |\n"
+        "| Resumes | [Resume Dataset, `Resume.csv` (Kaggle, snehaanbhawal)]"
+        "(https://www.kaggle.com/datasets/snehaanbhawal/resume-dataset) "
+        "| 2,484 | 2,483 demo profiles in `public.seeker_profiles` |")
+
+    st.subheader("Step 1: cleaning at load time")
+    st.markdown(
+        "Python loaders (`data/load_postings.py`, `data/load_resumes.py`) filtered and "
+        "reshaped the raw files to fit the app's schema and the Supabase free tier's "
+        "500 MB limit.\n\n"
+        "**Job postings**\n"
+        "- Dropped postings with no title or description, a description under 700 "
+        "characters, a Volunteer/Other work type, a closing date, or no experience level.\n"
+        "- Deduplicated on company + title, keeping the most-viewed copy "
+        "(staffing agencies repost the same listing many times).\n"
+        "- Capped each company at its 10 most-viewed postings.\n"
+        "- Truncated descriptions to 4,000 characters, parsed a US state code from the "
+        "location text, and converted the remote flag to true/false.\n"
+        "- Did not load the posting date (`listed_time`), so no time analysis is possible.\n\n"
+        "**Resumes**\n"
+        "- Skipped resumes under 200 characters and truncated the rest to 8,000.\n"
+        "- Took the headline from the first line, and estimated years of experience as "
+        "the span between the earliest and latest year mentioned (a rough heuristic).\n"
+        "- Kept the dataset's job category label. All rows are marked as demo profiles "
+        "and can never produce a match.")
+
+    st.subheader("Step 2: audit and cleaning for analysis")
+    st.markdown(
+        "`analytics/prepare.py` audits the loaded data and writes the results to a "
+        "separate `analytics` schema. The app's own tables are never modified, so every "
+        "raw value can still be recovered.\n"
+        "- **Salary:** values outside $15,000 to $1,000,000 a year (mislabelled pay "
+        "periods) are set to null in the clean view.\n"
+        "- **State:** recovered from metro-area labels such as \"Greater Boston\"; "
+        "nationwide postings are flagged instead.\n"
+        "- **Flags, not deletions:** truncated text, duplicate descriptions or resumes, "
+        "and blank company names are flagged and kept.\n"
+        "- **Reserved test data:** 20% of jobs and resumes are held out, stratified by "
+        "experience level and category. The charts on this dashboard use only the "
+        "remaining training rows.\n"
+        "- **Privacy:** real users' resumes and employer-posted jobs are excluded "
+        "entirely.\n\n"
+        "The **Audit checks** tab lists every check with the number of rows it affected.")
 
 with tab_plots:
     # 1. Data quality: share of jobs affected by each check.
