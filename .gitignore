@@ -12,6 +12,7 @@ models/*
 !models/fit_model.txt
 !models/fit_artifacts.joblib
 !models/metrics.json
+!models/evaluation.json
 *.txt.model
 *.onnx
 

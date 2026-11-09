@@ -1,0 +1,733 @@
+{
+  "generated_at": "2026-11-09T12:22:00",
+  "duration_seconds": 49.6,
+  "n_pairs": 8000,
+  "n_cold_jd_test": 1759,
+  "models": {
+    "tfidf_cosine": {
+      "role": "baseline",
+      "features": [
+        "tfidf_cosine"
+      ]
+    },
+    "embedding_cosine": {
+      "role": "baseline",
+      "features": [
+        "emb_cosine"
+      ]
+    },
+    "logistic_regression": {
+      "role": "candidate",
+      "features": [
+        "emb_cosine",
+        "tfidf_cosine",
+        "skill_overlap_count",
+        "skill_jaccard",
+        "skill_coverage",
+        "skill_idf_weighted",
+        "years_gap",
+        "seniority_gap",
+        "token_overlap_jaccard",
+        "job_required_years",
+        "job_seniority"
+      ]
+    },
+    "lightgbm_all": {
+      "role": "candidate",
+      "features": [
+        "emb_cosine",
+        "tfidf_cosine",
+        "skill_overlap_count",
+        "skill_jaccard",
+        "skill_coverage",
+        "skill_idf_weighted",
+        "resume_years",
+        "job_required_years",
+        "years_gap",
+        "resume_seniority",
+        "job_seniority",
+        "seniority_gap",
+        "resume_len_log",
+        "job_len_log",
+        "token_overlap_jaccard"
+      ]
+    },
+    "lightgbm_pairwise": {
+      "role": "candidate",
+      "features": [
+        "emb_cosine",
+        "tfidf_cosine",
+        "skill_overlap_count",
+        "skill_jaccard",
+        "skill_coverage",
+        "skill_idf_weighted",
+        "years_gap",
+        "seniority_gap",
+        "token_overlap_jaccard",
+        "job_required_years",
+        "job_seniority"
+      ]
+    }
+  },
+  "selected_model": "lightgbm_pairwise",
+  "cold_jd": {
+    "tfidf_cosine": {
+      "auc_good_vs_no": 0.5768,
+      "macro_f1": 0.3694,
+      "ndcg_seeker_at_10": 0.6681,
+      "ndcg_employer_at_10": 0.6055,
+      "recall_per_class": {
+        "No Fit": 0.5531,
+        "Potential Fit": 0.3086,
+        "Good Fit": 0.2489
+      },
+      "auc_ci": [
+        0.513,
+        0.6495
+      ]
+    },
+    "embedding_cosine": {
+      "auc_good_vs_no": 0.6257,
+      "macro_f1": 0.3646,
+      "ndcg_seeker_at_10": 0.7041,
+      "ndcg_employer_at_10": 0.6107,
+      "recall_per_class": {
+        "No Fit": 0.5974,
+        "Potential Fit": 0.259,
+        "Good Fit": 0.2402
+      },
+      "auc_ci": [
+        0.5387,
+        0.71
+      ]
+    },
+    "logistic_regression": {
+      "auc_good_vs_no": 0.6159,
+      "macro_f1": 0.3255,
+      "ndcg_seeker_at_10": 0.6744,
+      "ndcg_employer_at_10": 0.6107,
+      "recall_per_class": {
+        "No Fit": 0.776,
+        "Potential Fit": 0.1081,
+        "Good Fit": 0.1659
+      },
+      "auc_ci": [
+        0.539,
+        0.699
+      ]
+    },
+    "lightgbm_all": {
+      "auc_good_vs_no": 0.671,
+      "macro_f1": 0.4214,
+      "ndcg_seeker_at_10": 0.7087,
+      "ndcg_employer_at_10": 0.675,
+      "recall_per_class": {
+        "No Fit": 0.7655,
+        "Potential Fit": 0.2815,
+        "Good Fit": 0.2314
+      },
+      "auc_ci": [
+        0.5841,
+        0.7678
+      ]
+    },
+    "lightgbm_pairwise": {
+      "auc_good_vs_no": 0.6827,
+      "macro_f1": 0.4099,
+      "ndcg_seeker_at_10": 0.7279,
+      "ndcg_employer_at_10": 0.6546,
+      "recall_per_class": {
+        "No Fit": 0.762,
+        "Potential Fit": 0.2027,
+        "Good Fit": 0.2795
+      },
+      "auc_ci": [
+        0.5974,
+        0.7629
+      ]
+    }
+  },
+  "cold_resume": {
+    "tfidf_cosine": {
+      "auc_good_vs_no": 0.6579,
+      "macro_f1": 0.4041,
+      "ndcg_seeker_at_10": 0.6394,
+      "ndcg_employer_at_10": 0.6464,
+      "recall_per_class": {
+        "No Fit": 0.5988,
+        "Potential Fit": 0.2635,
+        "Good Fit": 0.35
+      },
+      "auc_ci": [
+        0.6369,
+        0.6789
+      ]
+    },
+    "embedding_cosine": {
+      "auc_good_vs_no": 0.6823,
+      "macro_f1": 0.4147,
+      "ndcg_seeker_at_10": 0.6507,
+      "ndcg_employer_at_10": 0.6735,
+      "recall_per_class": {
+        "No Fit": 0.6072,
+        "Potential Fit": 0.273,
+        "Good Fit": 0.3635
+      },
+      "auc_ci": [
+        0.6597,
+        0.7054
+      ]
+    },
+    "logistic_regression": {
+      "auc_good_vs_no": 0.6946,
+      "macro_f1": 0.3689,
+      "ndcg_seeker_at_10": 0.6734,
+      "ndcg_employer_at_10": 0.6624,
+      "recall_per_class": {
+        "No Fit": 0.867,
+        "Potential Fit": 0.067,
+        "Good Fit": 0.266
+      },
+      "auc_ci": [
+        0.6715,
+        0.7174
+      ]
+    },
+    "lightgbm_all": {
+      "auc_good_vs_no": 0.8176,
+      "macro_f1": 0.5719,
+      "ndcg_seeker_at_10": 0.7518,
+      "ndcg_employer_at_10": 0.6454,
+      "recall_per_class": {
+        "No Fit": 0.763,
+        "Potential Fit": 0.3675,
+        "Good Fit": 0.5565
+      },
+      "auc_ci": [
+        0.797,
+        0.8386
+      ]
+    },
+    "lightgbm_pairwise": {
+      "auc_good_vs_no": 0.7561,
+      "macro_f1": 0.4795,
+      "ndcg_seeker_at_10": 0.7147,
+      "ndcg_employer_at_10": 0.6502,
+      "recall_per_class": {
+        "No Fit": 0.7702,
+        "Potential Fit": 0.2575,
+        "Good Fit": 0.402
+      },
+      "auc_ci": [
+        0.7333,
+        0.78
+      ]
+    }
+  },
+  "selected_vs_baseline_auc_gap_ci": {
+    "cold_jd": [
+      0.0572,
+      0.1528
+    ],
+    "cold_resume": [
+      0.076,
+      0.1202
+    ]
+  },
+  "confusion_matrix_cold_resume": {
+    "labels": [
+      "No Fit",
+      "Potential Fit",
+      "Good Fit"
+    ],
+    "matrix": [
+      [
+        3081,
+        447,
+        472
+      ],
+      [
+        1135,
+        515,
+        350
+      ],
+      [
+        1005,
+        191,
+        804
+      ]
+    ]
+  },
+  "error_analysis_cold_resume": {
+    "job_seniority": [
+      {
+        "group": "director/exec",
+        "n": 746,
+        "good_fit_share": 0.217,
+        "tfidf_cosine": {
+          "auc": 0.5939,
+          "macro_f1": 0.369,
+          "severe_error_rate": 0.193
+        },
+        "logistic_regression": {
+          "auc": 0.6377,
+          "macro_f1": 0.26,
+          "severe_error_rate": 0.248
+        },
+        "lightgbm_pairwise": {
+          "auc": 0.6753,
+          "macro_f1": 0.4376,
+          "severe_error_rate": 0.1997
+        }
+      },
+      {
+        "group": "intern",
+        "n": 336,
+        "good_fit_share": 0.292,
+        "tfidf_cosine": {
+          "auc": 0.6399,
+          "macro_f1": 0.4102,
+          "severe_error_rate": 0.1845
+        },
+        "logistic_regression": {
+          "auc": 0.6618,
+          "macro_f1": 0.4196,
+          "severe_error_rate": 0.253
+        },
+        "lightgbm_pairwise": {
+          "auc": 0.7652,
+          "macro_f1": 0.5361,
+          "severe_error_rate": 0.1935
+        }
+      },
+      {
+        "group": "junior",
+        "n": 67,
+        "good_fit_share": 0.015,
+        "tfidf_cosine": {
+          "auc": 0.4359,
+          "macro_f1": 0.3193,
+          "severe_error_rate": 0.0149
+        },
+        "logistic_regression": {
+          "auc": 0.9231,
+          "macro_f1": 0.2667,
+          "severe_error_rate": 0.0149
+        },
+        "lightgbm_pairwise": {
+          "auc": 0.2564,
+          "macro_f1": 0.471,
+          "severe_error_rate": 0.0299
+        }
+      },
+      {
+        "group": "mid",
+        "n": 1066,
+        "good_fit_share": 0.196,
+        "tfidf_cosine": {
+          "auc": 0.7175,
+          "macro_f1": 0.3765,
+          "severe_error_rate": 0.1182
+        },
+        "logistic_regression": {
+          "auc": 0.6887,
+          "macro_f1": 0.3431,
+          "severe_error_rate": 0.1904
+        },
+        "lightgbm_pairwise": {
+          "auc": 0.7788,
+          "macro_f1": 0.4684,
+          "severe_error_rate": 0.137
+        }
+      },
+      {
+        "group": "not stated",
+        "n": 342,
+        "good_fit_share": 0.076,
+        "tfidf_cosine": {
+          "auc": 0.6355,
+          "macro_f1": 0.3798,
+          "severe_error_rate": 0.1374
+        },
+        "logistic_regression": {
+          "auc": 0.6525,
+          "macro_f1": 0.3458,
+          "severe_error_rate": 0.0556
+        },
+        "lightgbm_pairwise": {
+          "auc": 0.8301,
+          "macro_f1": 0.497,
+          "severe_error_rate": 0.0614
+        }
+      },
+      {
+        "group": "principal/manager",
+        "n": 1863,
+        "good_fit_share": 0.232,
+        "tfidf_cosine": {
+          "auc": 0.6356,
+          "macro_f1": 0.3809,
+          "severe_error_rate": 0.1889
+        },
+        "logistic_regression": {
+          "auc": 0.6645,
+          "macro_f1": 0.3294,
+          "severe_error_rate": 0.2373
+        },
+        "lightgbm_pairwise": {
+          "auc": 0.7235,
+          "macro_f1": 0.4575,
+          "severe_error_rate": 0.1927
+        }
+      },
+      {
+        "group": "senior",
+        "n": 3580,
+        "good_fit_share": 0.299,
+        "tfidf_cosine": {
+          "auc": 0.6548,
+          "macro_f1": 0.423,
+          "severe_error_rate": 0.1955
+        },
+        "logistic_regression": {
+          "auc": 0.703,
+          "macro_f1": 0.3805,
+          "severe_error_rate": 0.2503
+        },
+        "lightgbm_pairwise": {
+          "auc": 0.7575,
+          "macro_f1": 0.4475,
+          "severe_error_rate": 0.2053
+        }
+      }
+    ],
+    "job_required_years": [
+      {
+        "group": "1-2 yrs",
+        "n": 1009,
+        "good_fit_share": 0.221,
+        "tfidf_cosine": {
+          "auc": 0.6625,
+          "macro_f1": 0.4456,
+          "severe_error_rate": 0.1487
+        },
+        "logistic_regression": {
+          "auc": 0.7115,
+          "macro_f1": 0.3625,
+          "severe_error_rate": 0.1992
+        },
+        "lightgbm_pairwise": {
+          "auc": 0.7687,
+          "macro_f1": 0.4938,
+          "severe_error_rate": 0.1576
+        }
+      },
+      {
+        "group": "3-5 yrs",
+        "n": 3243,
+        "good_fit_share": 0.263,
+        "tfidf_cosine": {
+          "auc": 0.6815,
+          "macro_f1": 0.4209,
+          "severe_error_rate": 0.1631
+        },
+        "logistic_regression": {
+          "auc": 0.7188,
+          "macro_f1": 0.3625,
+          "severe_error_rate": 0.2297
+        },
+        "lightgbm_pairwise": {
+          "auc": 0.7726,
+          "macro_f1": 0.4932,
+          "severe_error_rate": 0.1724
+        }
+      },
+      {
+        "group": "6+ yrs",
+        "n": 1771,
+        "good_fit_share": 0.294,
+        "tfidf_cosine": {
+          "auc": 0.6037,
+          "macro_f1": 0.3776,
+          "severe_error_rate": 0.2219
+        },
+        "logistic_regression": {
+          "auc": 0.6213,
+          "macro_f1": 0.3405,
+          "severe_error_rate": 0.2908
+        },
+        "lightgbm_pairwise": {
+          "auc": 0.6963,
+          "macro_f1": 0.4263,
+          "severe_error_rate": 0.253
+        }
+      },
+      {
+        "group": "not stated",
+        "n": 1977,
+        "good_fit_share": 0.204,
+        "tfidf_cosine": {
+          "auc": 0.6506,
+          "macro_f1": 0.3648,
+          "severe_error_rate": 0.1821
+        },
+        "logistic_regression": {
+          "auc": 0.6884,
+          "macro_f1": 0.3689,
+          "severe_error_rate": 0.1872
+        },
+        "lightgbm_pairwise": {
+          "auc": 0.7592,
+          "macro_f1": 0.4679,
+          "severe_error_rate": 0.1573
+        }
+      }
+    ],
+    "resume_years": [
+      {
+        "group": "0-2 yrs",
+        "n": 480,
+        "good_fit_share": 0.212,
+        "tfidf_cosine": {
+          "auc": 0.6409,
+          "macro_f1": 0.3809,
+          "severe_error_rate": 0.1646
+        },
+        "logistic_regression": {
+          "auc": 0.6785,
+          "macro_f1": 0.3668,
+          "severe_error_rate": 0.1938
+        },
+        "lightgbm_pairwise": {
+          "auc": 0.6913,
+          "macro_f1": 0.4247,
+          "severe_error_rate": 0.1792
+        }
+      },
+      {
+        "group": "11+ yrs",
+        "n": 1238,
+        "good_fit_share": 0.258,
+        "tfidf_cosine": {
+          "auc": 0.6791,
+          "macro_f1": 0.3972,
+          "severe_error_rate": 0.1729
+        },
+        "logistic_regression": {
+          "auc": 0.7174,
+          "macro_f1": 0.3745,
+          "severe_error_rate": 0.2246
+        },
+        "lightgbm_pairwise": {
+          "auc": 0.8019,
+          "macro_f1": 0.5244,
+          "severe_error_rate": 0.1769
+        }
+      },
+      {
+        "group": "3-5 yrs",
+        "n": 1266,
+        "good_fit_share": 0.267,
+        "tfidf_cosine": {
+          "auc": 0.5955,
+          "macro_f1": 0.3609,
+          "severe_error_rate": 0.2156
+        },
+        "logistic_regression": {
+          "auc": 0.623,
+          "macro_f1": 0.3507,
+          "severe_error_rate": 0.2583
+        },
+        "lightgbm_pairwise": {
+          "auc": 0.7141,
+          "macro_f1": 0.4693,
+          "severe_error_rate": 0.2125
+        }
+      },
+      {
+        "group": "6-10 yrs",
+        "n": 1664,
+        "good_fit_share": 0.272,
+        "tfidf_cosine": {
+          "auc": 0.6228,
+          "macro_f1": 0.3883,
+          "severe_error_rate": 0.1899
+        },
+        "logistic_regression": {
+          "auc": 0.6722,
+          "macro_f1": 0.3473,
+          "severe_error_rate": 0.2602
+        },
+        "lightgbm_pairwise": {
+          "auc": 0.7469,
+          "macro_f1": 0.4514,
+          "severe_error_rate": 0.2013
+        }
+      },
+      {
+        "group": "unknown",
+        "n": 3352,
+        "good_fit_share": 0.235,
+        "tfidf_cosine": {
+          "auc": 0.6906,
+          "macro_f1": 0.4317,
+          "severe_error_rate": 0.1641
+        },
+        "logistic_regression": {
+          "auc": 0.7232,
+          "macro_f1": 0.3822,
+          "severe_error_rate": 0.2088
+        },
+        "lightgbm_pairwise": {
+          "auc": 0.7643,
+          "macro_f1": 0.4853,
+          "severe_error_rate": 0.1695
+        }
+      }
+    ],
+    "skill_coverage": [
+      {
+        "group": "25-50%",
+        "n": 2106,
+        "good_fit_share": 0.304,
+        "tfidf_cosine": {
+          "auc": 0.6077,
+          "macro_f1": 0.3753,
+          "severe_error_rate": 0.2085
+        },
+        "logistic_regression": {
+          "auc": 0.6334,
+          "macro_f1": 0.363,
+          "severe_error_rate": 0.2707
+        },
+        "lightgbm_pairwise": {
+          "auc": 0.7149,
+          "macro_f1": 0.4704,
+          "severe_error_rate": 0.2061
+        }
+      },
+      {
+        "group": "<25%",
+        "n": 4967,
+        "good_fit_share": 0.223,
+        "tfidf_cosine": {
+          "auc": 0.6388,
+          "macro_f1": 0.3871,
+          "severe_error_rate": 0.1655
+        },
+        "logistic_regression": {
+          "auc": 0.6846,
+          "macro_f1": 0.3008,
+          "severe_error_rate": 0.2241
+        },
+        "lightgbm_pairwise": {
+          "auc": 0.7434,
+          "macro_f1": 0.4249,
+          "severe_error_rate": 0.1901
+        }
+      },
+      {
+        "group": ">50%",
+        "n": 803,
+        "good_fit_share": 0.314,
+        "tfidf_cosine": {
+          "auc": 0.5889,
+          "macro_f1": 0.356,
+          "severe_error_rate": 0.213
+        },
+        "logistic_regression": {
+          "auc": 0.668,
+          "macro_f1": 0.4283,
+          "severe_error_rate": 0.1843
+        },
+        "lightgbm_pairwise": {
+          "auc": 0.7857,
+          "macro_f1": 0.5567,
+          "severe_error_rate": 0.1233
+        }
+      },
+      {
+        "group": "job lists no known skills",
+        "n": 124,
+        "good_fit_share": 0.0,
+        "tfidf_cosine": {
+          "auc": NaN,
+          "macro_f1": 0.2636,
+          "severe_error_rate": 0.0
+        },
+        "logistic_regression": {
+          "auc": NaN,
+          "macro_f1": 0.4716,
+          "severe_error_rate": 0.0
+        },
+        "lightgbm_pairwise": {
+          "auc": NaN,
+          "macro_f1": 0.6402,
+          "severe_error_rate": 0.0
+        }
+      }
+    ],
+    "embedding_similarity": [
+      {
+        "group": "high",
+        "n": 2667,
+        "good_fit_share": 0.361,
+        "tfidf_cosine": {
+          "auc": 0.5683,
+          "macro_f1": 0.3539,
+          "severe_error_rate": 0.2167
+        },
+        "logistic_regression": {
+          "auc": 0.5633,
+          "macro_f1": 0.3533,
+          "severe_error_rate": 0.3123
+        },
+        "lightgbm_pairwise": {
+          "auc": 0.6827,
+          "macro_f1": 0.4796,
+          "severe_error_rate": 0.2133
+        }
+      },
+      {
+        "group": "low",
+        "n": 2667,
+        "good_fit_share": 0.141,
+        "tfidf_cosine": {
+          "auc": 0.6034,
+          "macro_f1": 0.3444,
+          "severe_error_rate": 0.126
+        },
+        "logistic_regression": {
+          "auc": 0.6881,
+          "macro_f1": 0.2827,
+          "severe_error_rate": 0.1387
+        },
+        "lightgbm_pairwise": {
+          "auc": 0.7689,
+          "macro_f1": 0.4181,
+          "severe_error_rate": 0.129
+        }
+      },
+      {
+        "group": "medium",
+        "n": 2666,
+        "good_fit_share": 0.248,
+        "tfidf_cosine": {
+          "auc": 0.5584,
+          "macro_f1": 0.3505,
+          "severe_error_rate": 0.1943
+        },
+        "logistic_regression": {
+          "auc": 0.575,
+          "macro_f1": 0.2904,
+          "severe_error_rate": 0.2356
+        },
+        "lightgbm_pairwise": {
+          "auc": 0.6824,
+          "macro_f1": 0.4188,
+          "severe_error_rate": 0.2116
+        }
+      }
+    ]
+  }
+}
