@@ -13,6 +13,7 @@ models/*
 !models/fit_artifacts.joblib
 !models/metrics.json
 !models/evaluation.json
+!models/evaluation_in_domain.json
 *.txt.model
 *.onnx
 

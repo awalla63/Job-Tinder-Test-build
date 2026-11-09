@@ -1,0 +1,355 @@
+{
+  "generated_at": "2026-11-09T12:47:31",
+  "duration_seconds": 122.1,
+  "n_resumes": 507,
+  "n_postings": 8860,
+  "retrieved_per_resume": 200,
+  "top_k": 10,
+  "on_target_random_macro": 0.0311,
+  "on_target_retrieved_macro": 0.2155,
+  "n_resumes_seniority_checked": {
+    "le_2_years": 10,
+    "ge_10_years": 328
+  },
+  "overall": {
+    "tfidf_cosine": {
+      "p_at_10_macro": 0.3468,
+      "ndcg_at_10_macro": 0.3824,
+      "seniority_mismatch_at_10": 0.2491
+    },
+    "embedding_cosine": {
+      "p_at_10_macro": 0.3671,
+      "ndcg_at_10_macro": 0.3991,
+      "seniority_mismatch_at_10": 0.2101
+    },
+    "logistic_regression": {
+      "p_at_10_macro": 0.3467,
+      "ndcg_at_10_macro": 0.3739,
+      "seniority_mismatch_at_10": 0.2337
+    },
+    "lightgbm_all": {
+      "p_at_10_macro": 0.281,
+      "ndcg_at_10_macro": 0.2973,
+      "seniority_mismatch_at_10": 0.2328
+    },
+    "lightgbm_pairwise": {
+      "p_at_10_macro": 0.272,
+      "ndcg_at_10_macro": 0.2896,
+      "seniority_mismatch_at_10": 0.2491
+    }
+  },
+  "selected_gap_ci": {
+    "lightgbm_pairwise_minus_tfidf_cosine": {
+      "p_at_10": [
+        -0.1016,
+        -0.0598
+      ],
+      "seniority_mismatch_at_10": [
+        -0.021,
+        0.0207
+      ]
+    },
+    "lightgbm_pairwise_minus_embedding_cosine": {
+      "p_at_10": [
+        -0.1215,
+        -0.086
+      ],
+      "seniority_mismatch_at_10": [
+        0.0186,
+        0.0604
+      ]
+    }
+  },
+  "p_at_10_by_category": [
+    {
+      "category": "BPO",
+      "n_resumes": 5,
+      "random": 0.0261,
+      "tfidf_cosine": 0.0,
+      "embedding_cosine": 0.0,
+      "logistic_regression": 0.04,
+      "lightgbm_all": 0.04,
+      "lightgbm_pairwise": 0.0,
+      "selected_lift": 0.0
+    },
+    {
+      "category": "AGRICULTURE",
+      "n_resumes": 13,
+      "random": 0.0035,
+      "tfidf_cosine": 0.0154,
+      "embedding_cosine": 0.0385,
+      "logistic_regression": 0.0154,
+      "lightgbm_all": 0.0077,
+      "lightgbm_pairwise": 0.0077,
+      "selected_lift": 2.1985
+    },
+    {
+      "category": "AUTOMOBILE",
+      "n_resumes": 8,
+      "random": 0.0129,
+      "tfidf_cosine": 0.0,
+      "embedding_cosine": 0.0,
+      "logistic_regression": 0.0,
+      "lightgbm_all": 0.0125,
+      "lightgbm_pairwise": 0.0125,
+      "selected_lift": 0.9715
+    },
+    {
+      "category": "AVIATION",
+      "n_resumes": 24,
+      "random": 0.0034,
+      "tfidf_cosine": 0.1,
+      "embedding_cosine": 0.0583,
+      "logistic_regression": 0.05,
+      "lightgbm_all": 0.0292,
+      "lightgbm_pairwise": 0.0208,
+      "selected_lift": 6.1528
+    },
+    {
+      "category": "ARTS",
+      "n_resumes": 21,
+      "random": 0.0029,
+      "tfidf_cosine": 0.0286,
+      "embedding_cosine": 0.0619,
+      "logistic_regression": 0.0238,
+      "lightgbm_all": 0.0286,
+      "lightgbm_pairwise": 0.0286,
+      "selected_lift": 9.7363
+    },
+    {
+      "category": "APPAREL",
+      "n_resumes": 20,
+      "random": 0.0037,
+      "tfidf_cosine": 0.055,
+      "embedding_cosine": 0.02,
+      "logistic_regression": 0.06,
+      "lightgbm_all": 0.035,
+      "lightgbm_pairwise": 0.035,
+      "selected_lift": 9.397
+    },
+    {
+      "category": "ADVOCATE",
+      "n_resumes": 24,
+      "random": 0.0173,
+      "tfidf_cosine": 0.0583,
+      "embedding_cosine": 0.0458,
+      "logistic_regression": 0.0417,
+      "lightgbm_all": 0.0417,
+      "lightgbm_pairwise": 0.0417,
+      "selected_lift": 2.4129
+    },
+    {
+      "category": "CONSULTANT",
+      "n_resumes": 23,
+      "random": 0.0168,
+      "tfidf_cosine": 0.0261,
+      "embedding_cosine": 0.0522,
+      "logistic_regression": 0.0391,
+      "lightgbm_all": 0.0435,
+      "lightgbm_pairwise": 0.0739,
+      "selected_lift": 4.3951
+    },
+    {
+      "category": "FITNESS",
+      "n_resumes": 24,
+      "random": 0.0026,
+      "tfidf_cosine": 0.25,
+      "embedding_cosine": 0.2042,
+      "logistic_regression": 0.175,
+      "lightgbm_all": 0.0958,
+      "lightgbm_pairwise": 0.0875,
+      "selected_lift": 33.7065
+    },
+    {
+      "category": "PUBLIC-RELATIONS",
+      "n_resumes": 23,
+      "random": 0.0049,
+      "tfidf_cosine": 0.287,
+      "embedding_cosine": 0.2174,
+      "logistic_regression": 0.3043,
+      "lightgbm_all": 0.1609,
+      "lightgbm_pairwise": 0.0957,
+      "selected_lift": 19.7088
+    },
+    {
+      "category": "BANKING",
+      "n_resumes": 23,
+      "random": 0.0129,
+      "tfidf_cosine": 0.3,
+      "embedding_cosine": 0.2043,
+      "logistic_regression": 0.2826,
+      "lightgbm_all": 0.2174,
+      "lightgbm_pairwise": 0.1826,
+      "selected_lift": 14.1922
+    },
+    {
+      "category": "HEALTHCARE",
+      "n_resumes": 23,
+      "random": 0.0851,
+      "tfidf_cosine": 0.3304,
+      "embedding_cosine": 0.313,
+      "logistic_regression": 0.3391,
+      "lightgbm_all": 0.2565,
+      "lightgbm_pairwise": 0.2217,
+      "selected_lift": 2.6056
+    },
+    {
+      "category": "BUSINESS-DEVELOPMENT",
+      "n_resumes": 24,
+      "random": 0.0184,
+      "tfidf_cosine": 0.2583,
+      "embedding_cosine": 0.4667,
+      "logistic_regression": 0.3958,
+      "lightgbm_all": 0.2042,
+      "lightgbm_pairwise": 0.225,
+      "selected_lift": 12.2301
+    },
+    {
+      "category": "INFORMATION-TECHNOLOGY",
+      "n_resumes": 24,
+      "random": 0.0971,
+      "tfidf_cosine": 0.3875,
+      "embedding_cosine": 0.3958,
+      "logistic_regression": 0.4292,
+      "lightgbm_all": 0.3792,
+      "lightgbm_pairwise": 0.3208,
+      "selected_lift": 3.3053
+    },
+    {
+      "category": "CHEF",
+      "n_resumes": 24,
+      "random": 0.0078,
+      "tfidf_cosine": 0.7792,
+      "embedding_cosine": 0.725,
+      "logistic_regression": 0.6125,
+      "lightgbm_all": 0.3625,
+      "lightgbm_pairwise": 0.3292,
+      "selected_lift": 42.2669
+    },
+    {
+      "category": "CONSTRUCTION",
+      "n_resumes": 23,
+      "random": 0.0195,
+      "tfidf_cosine": 0.4957,
+      "embedding_cosine": 0.5696,
+      "logistic_regression": 0.4652,
+      "lightgbm_all": 0.3478,
+      "lightgbm_pairwise": 0.3348,
+      "selected_lift": 17.1455
+    },
+    {
+      "category": "DESIGNER",
+      "n_resumes": 22,
+      "random": 0.022,
+      "tfidf_cosine": 0.5182,
+      "embedding_cosine": 0.5909,
+      "logistic_regression": 0.5727,
+      "lightgbm_all": 0.4636,
+      "lightgbm_pairwise": 0.4818,
+      "selected_lift": 21.8918
+    },
+    {
+      "category": "FINANCE",
+      "n_resumes": 24,
+      "random": 0.0713,
+      "tfidf_cosine": 0.3417,
+      "embedding_cosine": 0.5708,
+      "logistic_regression": 0.4,
+      "lightgbm_all": 0.4458,
+      "lightgbm_pairwise": 0.4875,
+      "selected_lift": 6.8343
+    },
+    {
+      "category": "SALES",
+      "n_resumes": 24,
+      "random": 0.0769,
+      "tfidf_cosine": 0.5,
+      "embedding_cosine": 0.6583,
+      "logistic_regression": 0.55,
+      "lightgbm_all": 0.5,
+      "lightgbm_pairwise": 0.4917,
+      "selected_lift": 6.3967
+    },
+    {
+      "category": "DIGITAL-MEDIA",
+      "n_resumes": 20,
+      "random": 0.0358,
+      "tfidf_cosine": 0.69,
+      "embedding_cosine": 0.625,
+      "logistic_regression": 0.69,
+      "lightgbm_all": 0.59,
+      "lightgbm_pairwise": 0.5,
+      "selected_lift": 13.9748
+    },
+    {
+      "category": "TEACHER",
+      "n_resumes": 21,
+      "random": 0.016,
+      "tfidf_cosine": 0.6762,
+      "embedding_cosine": 0.619,
+      "logistic_regression": 0.5571,
+      "lightgbm_all": 0.4,
+      "lightgbm_pairwise": 0.5286,
+      "selected_lift": 32.9799
+    },
+    {
+      "category": "HR",
+      "n_resumes": 22,
+      "random": 0.0246,
+      "tfidf_cosine": 0.7955,
+      "embedding_cosine": 0.8318,
+      "logistic_regression": 0.8136,
+      "lightgbm_all": 0.7,
+      "lightgbm_pairwise": 0.5636,
+      "selected_lift": 22.9074
+    },
+    {
+      "category": "ENGINEERING",
+      "n_resumes": 24,
+      "random": 0.1196,
+      "tfidf_cosine": 0.5208,
+      "embedding_cosine": 0.6583,
+      "logistic_regression": 0.5792,
+      "lightgbm_all": 0.5292,
+      "lightgbm_pairwise": 0.6542,
+      "selected_lift": 5.4678
+    },
+    {
+      "category": "ACCOUNTANT",
+      "n_resumes": 24,
+      "random": 0.0458,
+      "tfidf_cosine": 0.9083,
+      "embedding_cosine": 0.8833,
+      "logistic_regression": 0.8833,
+      "lightgbm_all": 0.8542,
+      "lightgbm_pairwise": 0.8042,
+      "selected_lift": 17.5491
+    }
+  ],
+  "category_title_patterns": {
+    "ACCOUNTANT": "account(ant|ing)|bookkeep|audit|\\btax\\b|payroll|controller|accounts (payable|receivable)",
+    "ADVOCATE": "attorney|lawyer|paralegal|legal|counsel|advocate|litigation",
+    "AGRICULTURE": "agricultur|farm|agronom|\\bcrop|ranch|grower|horticultur|\\bplant manager",
+    "APPAREL": "apparel|fashion|clothing|merchandis|textile|garment|footwear",
+    "ARTS": "\\bart\\b|\\barts\\b|artist|museum|music|theat(er|re)|gallery|creative|illustrat",
+    "AUTOMOBILE": "automotive|\\bauto\\b|vehicle|mechanic|dealership|\\bcar\\b|collision|fleet",
+    "AVIATION": "aviation|aircraft|pilot|airline|flight|avionic|airport|\\ba&p\\b|aerospace",
+    "BANKING": "\\bbank|teller|\\bloan|mortgage|credit|branch manager|lending|underwrit",
+    "BPO": "call center|contact center|customer (service|support|care)|\\bbpo\\b|representative",
+    "BUSINESS-DEVELOPMENT": "business development|partnership|account executive|growth|\\bbdr\\b|\\bsdr\\b",
+    "CHEF": "\\bchef|\\bcook\\b|culinary|kitchen|\\bsous\\b|food service|restaurant",
+    "CONSTRUCTION": "construction|superintendent|carpenter|electrician|foreman|estimator|plumb|\\bhvac\\b|site manager",
+    "CONSULTANT": "consult|advisory",
+    "DESIGNER": "design|\\bux\\b|\\bui\\b|graphic|creative",
+    "DIGITAL-MEDIA": "digital|media|content|marketing|video|\\bseo\\b|social",
+    "ENGINEERING": "engineer|mechanical|electrical|civil|manufacturing|process",
+    "FINANCE": "financ|\\bfp&a\\b|investment|treasury|controller|analyst",
+    "FITNESS": "fitness|personal trainer|\\bcoach|\\bgym\\b|wellness|yoga|exercise",
+    "HEALTHCARE": "nurse|\\brn\\b|medical|clinical|health|patient|physician|therap|pharmac|\\bcare\\b",
+    "HR": "\\bhr\\b|human resources|recruit|talent|people (operations|partner)|benefits",
+    "INFORMATION-TECHNOLOGY": "\\bit\\b|software|developer|programmer|\\bdata\\b|network|systems?\\b|cloud|devops|cyber|database|help ?desk|technical support|\\bweb\\b",
+    "PUBLIC-RELATIONS": "public relations|\\bpr\\b|communications|media relations|publicist",
+    "SALES": "sales|account executive|account manager|business development",
+    "TEACHER": "teacher|instructor|tutor|education|faculty|professor|school|teaching"
+  }
+}
