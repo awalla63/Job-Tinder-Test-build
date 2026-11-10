@@ -22,8 +22,21 @@ retrieve the 200 nearest postings by embedding cosine, then let each model reord
 as in ml/evaluate.py (cold-JD train rows, same seeds), so the two scripts compare the same
 five models.
 
-    python ml/evaluate_in_domain.py              # needs DATABASE_URL the first time
-    python ml/evaluate_in_domain.py --refresh    # re-pull the test split from Supabase
+Job pool (--jobs): the LinkedIn test postings above, or live USAJOBS postings fetched
+from the API and embedded locally (nothing is written to the database):
+
+    usajobs        the text data/usajobs_client.py stores today: the short JobSummary
+    usajobs_full   JobSummary + MajorDuties + QualificationSummary, capped at 4,000
+                   characters like the LinkedIn descriptions
+
+USAJOBS has no LinkedIn experience level, so the seniority check reads the GS grade
+instead (GS_LEVELS below): GS-7 and under counts as entry level, GS-14 and up or SES as
+director level. Postings on other pay plans (wage grade, VA, etc.) are left unlevelled.
+
+    python ml/evaluate_in_domain.py                      # needs DATABASE_URL the first time
+    python ml/evaluate_in_domain.py --refresh            # re-pull the test split from Supabase
+    python ml/evaluate_in_domain.py --jobs usajobs       # needs USAJOBS_API_KEY the first time
+    python ml/evaluate_in_domain.py --jobs usajobs_full
 """
 from __future__ import annotations
 
@@ -52,6 +65,10 @@ from ml.train import ensure_dataset  # noqa: E402
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 CACHE = REPO_ROOT / "data" / "raw" / "in_domain_test.pkl"
+USAJOBS_RAW_CACHE = REPO_ROOT / "data" / "raw" / "usajobs_eval_raw.pkl"
+USAJOBS_POSTINGS = 3000
+DESC_CAP = 4000  # data/load_postings.py --desc-chars default
+GS_PLANS = {"GS", "GL", "GG"}  # General Schedule and its law-enforcement / excepted twins
 MODEL_DIR = REPO_ROOT / "models"
 COL = {name: i for i, name in enumerate(ALL_FEATURE_NAMES)}
 
@@ -136,6 +153,72 @@ def load_test_split(refresh: bool) -> dict:
     return data
 
 
+def gs_level(descriptor: dict) -> str:
+    """Map a posting's federal grade onto the LinkedIn level names the metrics use."""
+    plans = {g.get("Code") for g in descriptor.get("JobGrade") or []}
+    details = (descriptor.get("UserArea") or {}).get("Details") or {}
+    if "ES" in plans:
+        return "Director"
+    if not plans & GS_PLANS:
+        return ""
+    try:
+        low, high = int(details.get("LowGrade")), int(details.get("HighGrade"))
+    except (TypeError, ValueError):
+        return ""
+    if high <= 7:
+        return "Entry level"
+    if low >= 14:
+        return "Director"
+    return "Mid-Senior level"
+
+
+def load_usajobs(variant: str, refresh: bool) -> tuple[pd.DataFrame, np.ndarray]:
+    """Recent USAJOBS postings and their embeddings, cached; never touches the database."""
+    from dotenv import load_dotenv
+
+    from data import usajobs_client
+
+    load_dotenv(REPO_ROOT / ".env")
+    if refresh or not USAJOBS_RAW_CACHE.exists():
+        print(f"Fetching {USAJOBS_POSTINGS:,} postings from the USAJOBS API ...")
+        # No keyword: every posting from the last 30 days, so the pool is not tilted
+        # toward the fields a keyword list happens to name.
+        items = list(usajobs_client.search("", days_posted=30, results_per_page=500,
+                                           max_results=USAJOBS_POSTINGS))
+        joblib.dump(items, USAJOBS_RAW_CACHE)
+    items = joblib.load(USAJOBS_RAW_CACHE)
+
+    rows = []
+    for item in items:
+        record = usajobs_client.map_record(item)
+        if not record:
+            continue
+        descriptor = item.get("MatchedObjectDescriptor") or {}
+        if variant == "usajobs_full":
+            details = (descriptor.get("UserArea") or {}).get("Details") or {}
+            parts = [record["description"], " ".join(details.get("MajorDuties") or []),
+                     descriptor.get("QualificationSummary") or ""]
+            record["description"] = "\n\n".join(p for p in parts if p)[:DESC_CAP]
+        rows.append({"id": record["external_id"], "title": record["title"],
+                     "company": record["company_name"], "description": record["description"],
+                     "level": gs_level(descriptor)})
+    jobs = pd.DataFrame(rows).drop_duplicates("id").reset_index(drop=True)
+
+    cache = REPO_ROOT / "data" / "raw" / f"usajobs_eval_{variant}_vectors.npz"
+    keys = jobs.id.to_numpy(dtype=object)
+    if cache.exists() and not refresh:
+        stored = np.load(cache, allow_pickle=True)
+        if list(stored["keys"]) == list(keys):
+            return jobs, stored["vectors"]
+    from ml.encoder import get_encoder
+
+    print(f"Embedding {len(jobs):,} USAJOBS postings ({variant}) ...", flush=True)
+    vectors = get_encoder().encode_jobs(
+        [job_text(t, c, d) for t, c, d in zip(jobs.title, jobs.company, jobs.description)])
+    np.savez_compressed(cache, keys=keys, vectors=vectors)
+    return jobs, vectors
+
+
 def memoise_feature_extractors() -> None:
     """Cache the per-document extractors build_row calls.
 
@@ -187,7 +270,10 @@ def bootstrap_gap(a: np.ndarray, b: np.ndarray, reps: int, seed: int) -> list[fl
 # ---------------------------------------------------------------------------
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--refresh", action="store_true", help="re-pull from Supabase")
+    parser.add_argument("--refresh", action="store_true",
+                        help="re-pull the test split (and USAJOBS postings) instead of the cache")
+    parser.add_argument("--jobs", choices=["linkedin", "usajobs", "usajobs_full"],
+                        default="linkedin", help="job pool to rank (see module docstring)")
     parser.add_argument("--rounds", type=int, default=400)
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--boot", type=int, default=1000)
@@ -195,8 +281,12 @@ def main() -> None:
     started = time.time()
 
     data = load_test_split(args.refresh)
-    resumes, jobs = data["resumes"], data["jobs"]
-    print(f"{len(resumes):,} test resumes | {len(jobs):,} test postings")
+    resumes = data["resumes"]
+    if args.jobs == "linkedin":
+        jobs, job_vectors = data["jobs"], data["job_vectors"]
+    else:
+        jobs, job_vectors = load_usajobs(args.jobs, args.refresh)
+    print(f"{len(resumes):,} test resumes | {len(jobs):,} {args.jobs} postings")
 
     titles = jobs.title.fillna("").str.lower()
     # Non-capturing groups: str.contains only needs a match, not the groups.
@@ -207,7 +297,7 @@ def main() -> None:
                                                        jobs.description)]
 
     # --- Retrieval: the same 200 candidates per resume for every model ---
-    sims = data["resume_vectors"] @ data["job_vectors"].T
+    sims = data["resume_vectors"] @ job_vectors.T
     candidates = np.argsort(-sims, axis=1)[:, :RETRIEVE]
 
     # --- Features for every (resume, candidate) pair, exactly as the API builds them ---
@@ -224,7 +314,7 @@ def main() -> None:
     X = features.build_matrix(
         [ResumeSide(text=resumes.text.iat[i], embedding=data["resume_vectors"][i])
          for i in rows_r],
-        [JobSide(text=job_texts[j], embedding=data["job_vectors"][j]) for j in rows_j],
+        [JobSide(text=job_texts[j], embedding=job_vectors[j]) for j in rows_j],
         tfidf_cosines=tfidf[rows_r, rows_j], skill_idf=skill_idf,
     )
 
@@ -311,6 +401,7 @@ def main() -> None:
     report = {
         "generated_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "duration_seconds": round(time.time() - started, 1),
+        "job_source": args.jobs,
         "n_resumes": int(len(resumes)), "n_postings": int(len(jobs)),
         "retrieved_per_resume": RETRIEVE, "top_k": TOP_K,
         "on_target_random_macro": round(random_macro, 4),
@@ -322,8 +413,9 @@ def main() -> None:
                                    .to_dict(orient="records"),
         "category_title_patterns": CATEGORY_TITLES,
     }
-    (MODEL_DIR / "evaluation_in_domain.json").write_text(json.dumps(report, indent=2))
-    print(f"\nSaved models/evaluation_in_domain.json ({report['duration_seconds']}s)")
+    name = "evaluation_in_domain" + ("" if args.jobs == "linkedin" else f"_{args.jobs}")
+    (MODEL_DIR / f"{name}.json").write_text(json.dumps(report, indent=2))
+    print(f"\nSaved models/{name}.json ({report['duration_seconds']}s)")
 
 
 if __name__ == "__main__":
