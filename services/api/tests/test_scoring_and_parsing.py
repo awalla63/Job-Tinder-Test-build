@@ -126,6 +126,27 @@ def test_usajobs_record_maps_onto_job_columns():
     assert record["normalized_salary"] == pytest.approx(110000.0)
 
 
+def test_usajobs_description_includes_duties_and_qualifications():
+    record = map_record(_descriptor(
+        QualificationSummary="One year of specialized experience at GS-11.",
+        UserArea={"Details": {"JobSummary": "Analyse data for the agency.",
+                              "MajorDuties": ["Build models.", "Brief leadership."]}},
+    ))
+    assert record["description"] == (
+        "Analyse data for the agency.\n\nBuild models. Brief leadership.\n\n"
+        "One year of specialized experience at GS-11."
+    )
+
+
+def test_usajobs_description_is_capped():
+    record = map_record(_descriptor(
+        QualificationSummary="x" * 10_000,
+        UserArea={"Details": {"JobSummary": "Analyse data for the agency."}},
+    ))
+    assert len(record["description"]) == 4000
+    assert record["description"].startswith("Analyse data")
+
+
 def test_hourly_pay_is_annualised():
     record = map_record(_descriptor(PositionRemuneration=[
         {"MinimumRange": "50", "MaximumRange": "50", "RateIntervalCode": "PH"}

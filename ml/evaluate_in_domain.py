@@ -25,9 +25,9 @@ five models.
 Job pool (--jobs): the LinkedIn test postings above, or live USAJOBS postings fetched
 from the API and embedded locally (nothing is written to the database):
 
-    usajobs        the text data/usajobs_client.py stores today: the short JobSummary
-    usajobs_full   JobSummary + MajorDuties + QualificationSummary, capped at 4,000
-                   characters like the LinkedIn descriptions
+    usajobs        JobSummary only: the short text data/usajobs_client.py used to store
+    usajobs_full   the connector's description as stored now: JobSummary + MajorDuties +
+                   QualificationSummary, capped at 4,000 characters like LinkedIn's
 
 USAJOBS has no LinkedIn experience level, so the seniority check reads the GS grade
 instead (GS_LEVELS below): GS-7 and under counts as entry level, GS-14 and up or SES as
@@ -67,7 +67,6 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 CACHE = REPO_ROOT / "data" / "raw" / "in_domain_test.pkl"
 USAJOBS_RAW_CACHE = REPO_ROOT / "data" / "raw" / "usajobs_eval_raw.pkl"
 USAJOBS_POSTINGS = 3000
-DESC_CAP = 4000  # data/load_postings.py --desc-chars default
 GS_PLANS = {"GS", "GL", "GG"}  # General Schedule and its law-enforcement / excepted twins
 MODEL_DIR = REPO_ROOT / "models"
 COL = {name: i for i, name in enumerate(ALL_FEATURE_NAMES)}
@@ -194,11 +193,8 @@ def load_usajobs(variant: str, refresh: bool) -> tuple[pd.DataFrame, np.ndarray]
         if not record:
             continue
         descriptor = item.get("MatchedObjectDescriptor") or {}
-        if variant == "usajobs_full":
-            details = (descriptor.get("UserArea") or {}).get("Details") or {}
-            parts = [record["description"], " ".join(details.get("MajorDuties") or []),
-                     descriptor.get("QualificationSummary") or ""]
-            record["description"] = "\n\n".join(p for p in parts if p)[:DESC_CAP]
+        if variant == "usajobs":
+            record["description"] = descriptor["UserArea"]["Details"]["JobSummary"]
         rows.append({"id": record["external_id"], "title": record["title"],
                      "company": record["company_name"], "description": record["description"],
                      "level": gs_level(descriptor)})

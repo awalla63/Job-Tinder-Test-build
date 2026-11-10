@@ -29,6 +29,7 @@ BASE_URL = "https://data.usajobs.gov/api/search"
 MAX_RESULTS_PER_PAGE = 500          # documented hard cap
 MAX_RESULTS_PER_QUERY = 10_000      # documented pagination ceiling
 THROTTLE_SECONDS = 0.5              # no published rate limit; self-throttle as a courtesy
+DESC_CAP = 4000                     # same cap data/load_postings.py applies to LinkedIn
 
 
 class USAJobsError(RuntimeError):
@@ -124,6 +125,19 @@ RATE_INTERVAL = {
 ANNUALISE = {"YEARLY": 1, "HOURLY": 2080, "DAILY": 260, "WEEKLY": 52, "BIWEEKLY": 26, "MONTHLY": 12}
 
 
+def full_description(descriptor: dict[str, Any]) -> str:
+    """Summary, then major duties, then qualifications, capped at DESC_CAP characters.
+
+    JobSummary alone is only ~300-500 characters; the duties and qualifications under it
+    on the announcement are what say who fits. Embedding ranking scored clearly better
+    with them included (ml/evaluate_in_domain.py: usajobs vs usajobs_full).
+    """
+    details = (descriptor.get("UserArea") or {}).get("Details") or {}
+    parts = [details.get("JobSummary") or "", " ".join(details.get("MajorDuties") or []),
+             descriptor.get("QualificationSummary") or ""]
+    return "\n\n".join(p for p in parts if p)[:DESC_CAP]
+
+
 def map_record(item: dict[str, Any]) -> dict[str, Any] | None:
     """Map one SearchResultItem onto the `jobs` columns."""
     descriptor = item.get("MatchedObjectDescriptor") or {}
@@ -151,7 +165,7 @@ def map_record(item: dict[str, Any]) -> dict[str, Any] | None:
         "external_id": str(item.get("MatchedObjectId") or descriptor.get("PositionID") or "").strip(),
         "company_name": descriptor.get("OrganizationName") or descriptor.get("DepartmentName") or "",
         "title": title,
-        "description": summary,
+        "description": full_description(descriptor),
         "location": descriptor.get("PositionLocationDisplay"),
         "state": location_obj.get("CountrySubDivisionCode"),
         "normalized_salary": normalized_salary,
